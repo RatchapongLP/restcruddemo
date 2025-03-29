@@ -9,13 +9,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class EmployeeDaoJpaImpl implements EmployeeDao{
-
+public class EmployeeDaoJpaImpl implements EmployeeDao {
     private EntityManager entityManager;
+
     @Autowired
     public EmployeeDaoJpaImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
+
     @Override
     public List<Employee> findAll() {
         TypedQuery<Employee> query = entityManager.createQuery("from Employee", Employee.class);
@@ -28,8 +29,38 @@ public class EmployeeDaoJpaImpl implements EmployeeDao{
     }
 
     @Override
-    public Employee save(Employee employee) {
-        return entityManager.merge(employee);
+    public int findIdByInfo(Employee employee) {
+        // TODO:
+        return 0;
+    }
+
+    @Override
+    public List<Employee> findByFirstName(String firstName) {
+        // TODO:
+        return null;
+    }
+
+    @Override
+    public List<Employee> findByLastName(String lastName) {
+        // TODO:
+        return null;
+    }
+
+    @Override
+    public List<Employee> findByEmail(String email) {
+        // TODO:
+        return null;
+    }
+
+    @Override
+    public int addEmployee(Employee employee) {
+        entityManager.merge(employee);
+        return entityManager.find(Employee.class, employee).getId();
+    }
+
+    @Override
+    public void updateEmployee(Employee employee) {
+        // TODO:
     }
 
     @Override

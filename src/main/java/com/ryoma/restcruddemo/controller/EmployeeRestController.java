@@ -31,25 +31,82 @@ public class EmployeeRestController {
         return employee;
     }
 
+    @GetMapping("/employees")
+    public Employee findIdByInfo(@RequestBody Employee employee) {
+        int id = employeeService.findIdByInfo(employee);
+        // TODO:
+        if (employee == null) {
+            throw new RuntimeException("id not found - " + id);
+        }
+        return employee;
+    }
+
+    @GetMapping("/employees")
+    public List<Employee> findByFirstName(@RequestParam String firstName) {
+        List<Employee> list = employeeService.findByFirstName(firstName);
+        // TODO:
+        return null;
+    }
+
+    @GetMapping("/employees")
+    public List<Employee> findByLastName(@RequestParam String lastName) {
+        List<Employee> list = employeeService.findByLastName(lastName);
+        // TODO:
+        return null;
+    }
+
+    @GetMapping("/employees")
+    public List<Employee> findByEmail(@RequestParam String email) {
+        List<Employee> list = employeeService.findByEmail(email);
+        // TODO:
+        return null;
+    }
+
     @PostMapping("/employees")
-    public Employee createEmployee(@RequestBody Employee employee) {
-        employee.setId(0);
-        return employeeService.save(employee);
+    public int createEmployee(@RequestBody Employee employee) {
+//        employee.setId(0);
+// id of the deserialized employee is always 0 if the JSON request body does not have "id" property.
+
+        return employeeService.addEmployee(employee);
     }
 
     @PutMapping("/employees")
-    public Employee updateEmployee(@RequestBody Employee employee) {
-        return employeeService.save(employee);
+    public String updateEmployee(@RequestBody Employee employee) {
+        try {
+            employeeService.updateEmployee(employee);
+            return "Update was successful";
+        } catch (Exception e) {
+            String failMessage = "Update failed with error: " + e.getMessage();
+            if (e.getCause() != null) {
+                failMessage += "\ncause: " + e.getCause();
+            }
+            if (e.getStackTrace() != null && e.getStackTrace().length != 0) {
+                failMessage += "\nstack trace: ";
+                for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                    failMessage += "\n" + stackTraceElement.toString();
+                }
+            }
+            return failMessage;
+        }
     }
 
     @DeleteMapping("/employees/{id}")
     public String deleteEmployee(@PathVariable int id) {
-
-        Employee employee = employeeService.findById(id);
-        if (employee == null) {
-            throw new RuntimeException("id not found - " + id);
+        try {
+            employeeService.deleteById(id);
+            return "Deletion was successful";
+        } catch (Exception e) {
+            String failMessage = "Deletion failed with error: " + e.getMessage();
+            if (e.getCause() != null) {
+                failMessage += "\ncause: " + e.getCause();
+            }
+            if (e.getStackTrace() != null && e.getStackTrace().length != 0) {
+                failMessage += "\nstack trace: ";
+                for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                    failMessage += "\n" + stackTraceElement.toString();
+                }
+            }
+            return failMessage;
         }
-        employeeService.deleteById(id);
-        return "Deleted the employee id: " + id;
     }
 }

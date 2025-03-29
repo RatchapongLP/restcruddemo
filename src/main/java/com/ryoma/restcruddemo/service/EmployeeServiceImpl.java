@@ -9,13 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService{
-
+public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeDao employeeDao;
+
     @Autowired
     public EmployeeServiceImpl(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
     }
+
     @Override
     public List<Employee> findAll() {
         return employeeDao.findAll();
@@ -27,9 +28,34 @@ public class EmployeeServiceImpl implements EmployeeService{
     }
 
     @Override
+    public int findIdByInfo(Employee employee) {
+        return employeeDao.findIdByInfo(employee);
+    }
+
+    @Override
+    public List<Employee> findByFirstName(String firstName) {
+        return null;
+    }
+
+    @Override
+    public List<Employee> findByLastName(String lastName) {
+        return null;
+    }
+
+    @Override
+    public List<Employee> findByEmail(String email) {
+        return null;
+    }
+
+    @Override
     @Transactional
-    public Employee save(Employee employee) {
-        return employeeDao.save(employee);
+    public int addEmployee(Employee employee) {
+        return employeeDao.addEmployee(employee);
+    }
+
+    @Override
+    public void updateEmployee(Employee employee) {
+        employeeDao.updateEmployee(employee);
     }
 
     @Override

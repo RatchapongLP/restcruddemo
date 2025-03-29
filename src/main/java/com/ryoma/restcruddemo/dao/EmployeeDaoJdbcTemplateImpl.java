@@ -23,10 +23,6 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
             System.out.println("jdbcTemplate bean was registered successfully!!!");
         }
         this.jdbcTemplate = jdbcTemplate;
-//        this.list = new ArrayList<>();
-//        list.addAll(List.of(new Employee("Ryoma", "Echizen", "ryomano1@gmail.com"),
-//                new Employee("Fuji", "Shuzuke", "fujirestaurant@gmail.com"),
-//                new Employee("Ham", "Taro", "hamtaro@gmail.com")));
     }
 
     @Override
@@ -34,24 +30,57 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findAll()");
         String query = "SELECT * FROM employee";
         return jdbcTemplate.query(query, new EmployeeRowMapper());
-//        return List.copyOf(this.list);
     }
 
     @Override
     public Employee findById(int id) {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findById(" + id + ")");
         String query = "SELECT * FROM employee WHERE id=?";
-        return jdbcTemplate.queryForObject(query,new EmployeeRowMapper(), id);
-//        return this.list.stream().filter(e -> e.getId() == id).findAny().orElseThrow();
+        return jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), id);
     }
 
     @Override
-    public Employee save(Employee employee) {
-        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".save(): " + employee);
+    public int findIdByInfo(Employee employee) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByInfo(): " + employee);
+        String query = "SELECT * FROM employee WHERE first_name=? AND last_name=? AND email=?";
+        Employee employeeRetrieved = jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), employee.getFirstName(), employee.getLastName(), employee.getEmail());
+        return employeeRetrieved.getId();
+    }
+
+    @Override
+    public List<Employee> findByFirstName(String firstName) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByFirstName(): " + firstName);
+        String query = "SELECT * FROM employee WHERE first_name=?";
+        return jdbcTemplate.query(query, new EmployeeRowMapper(), firstName);
+    }
+
+    @Override
+    public List<Employee> findByLastName(String lastName) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByLastName(): " + lastName);
+        String query = "SELECT * FROM employee WHERE last_name=?";
+        return jdbcTemplate.query(query, new EmployeeRowMapper(), lastName);
+    }
+
+    @Override
+    public List<Employee> findByEmail(String email) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByEmail(): " + email);
+        String query = "SELECT * FROM employee WHERE email=?";
+        return jdbcTemplate.query(query, new EmployeeRowMapper(), email);
+    }
+
+    @Override
+    public int addEmployee(Employee employee) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".addEmployee(): " + employee);
         String query = "INSERT INTO employee_directory.employee (first_name, last_name, email) VALUES (?,?,?)";
         jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail());
-//        this.list.add(employee);
-        return employee;
+        return findIdByInfo(employee);
+    }
+
+    @Override
+    public void updateEmployee(Employee employee) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".updateEmployee(): " + employee);
+        String query = "UPDATE employee_directory.employee SET first_name=?, last_name=?, email=?";
+        jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail());
     }
 
     @Override
@@ -59,6 +88,5 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".deleteById(" + id + ")");
         String query = "DELETE FROM employee WHERE id=?";
         jdbcTemplate.update(query, id);
-//        this.list = this.list.stream().filter(e -> e.getId() != id).collect(Collectors.toList());
     }
 }
