@@ -47,7 +47,13 @@ public class EmployeeDaoJpaImpl implements EmployeeDao {
     }
 
     @Override
-    public List<Employee> findByEmail(String email) {
+    public Employee findByFullName(String firstName, String lastName) {
+        // TODO:
+        return null;
+    }
+
+    @Override
+    public Employee findByEmail(String email) {
         // TODO:
         return null;
     }

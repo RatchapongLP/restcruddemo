@@ -12,11 +12,13 @@ public interface EmployeeDao {
 
     int findIdByInfo(Employee employee);
 
+    Employee findByFullName(String firstName, String lastName);
+
     List<Employee> findByFirstName(String firstName);
 
     List<Employee> findByLastName(String lastName);
 
-    List<Employee> findByEmail(String email);
+    Employee findByEmail(String email);
 
     int addEmployee(Employee employee);
 

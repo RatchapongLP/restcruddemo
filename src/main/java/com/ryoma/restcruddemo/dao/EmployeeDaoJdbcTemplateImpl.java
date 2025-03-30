@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 @Primary
 public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
+
     private final JdbcTemplate jdbcTemplate;
     private List<Employee> list;
 
@@ -36,7 +37,14 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     public Employee findById(int id) {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findById(" + id + ")");
         String query = "SELECT * FROM employee WHERE id=?";
-        return jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), id);
+        List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), id);
+        if (employeeMatches.isEmpty()) {
+            System.out.println("No employee found with the given id");
+            return null;
+        }
+        System.out.println("Found an Employee with the id: " + employeeMatches.get(0));
+        return employeeMatches.get(0);
+//        return jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), id);
     }
 
     @Override
@@ -44,7 +52,23 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByInfo(): " + employee);
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=? AND email=?";
         Employee employeeRetrieved = jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), employee.getFirstName(), employee.getLastName(), employee.getEmail());
-        return employeeRetrieved.getId();
+        if (employeeRetrieved != null) {
+            return employeeRetrieved.getId();
+        }
+        return -1;
+    }
+
+    @Override
+    public Employee findByFullName(String firstName, String lastName) {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByFullName(): " + firstName + " " + lastName);
+        String query = "SELECT * FROM employee WHERE first_name=? AND last_name=?";
+        List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), firstName, lastName);
+        if (employeeMatches.isEmpty()) {
+            System.out.println("No employee found with given the fullName");
+            return null;
+        }
+        System.out.println("Found an Employee with the fullName: " + employeeMatches.get(0));
+        return employeeMatches.get(0);
     }
 
     @Override
@@ -62,10 +86,16 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
-    public List<Employee> findByEmail(String email) {
+    public Employee findByEmail(String email) {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByEmail(): " + email);
         String query = "SELECT * FROM employee WHERE email=?";
-        return jdbcTemplate.query(query, new EmployeeRowMapper(), email);
+        List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), email);
+        if (employeeMatches.isEmpty()) {
+            System.out.println("No employee found with the given email");
+            return null;
+        }
+        System.out.println("Found an Employee with the email: " + employeeMatches.get(0));
+        return employeeMatches.get(0);
     }
 
     @Override
@@ -79,8 +109,8 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     @Override
     public void updateEmployee(Employee employee) {
         System.out.println(EmployeeDaoJdbcTemplateImpl.class.getName() + ".updateEmployee(): " + employee);
-        String query = "UPDATE employee_directory.employee SET first_name=?, last_name=?, email=?";
-        jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail());
+        String query = "UPDATE employee_directory.employee SET first_name=?, last_name=?, email=? WHERE id=?";
+        jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getId());
     }
 
     @Override
