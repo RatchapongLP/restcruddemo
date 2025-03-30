@@ -6,12 +6,12 @@ import java.util.List;
 
 public interface EmployeeService {
 
-    /**
-     * Retrieves all the employee records in the database.
-     *
-     * @return {@link List} containing all the {@code employee}s found
-     */
-    List<Employee> findAll();
+//    /**
+//     * Retrieves all the employee records in the database.
+//     *
+//     * @return {@link List} containing all the {@code employee}s found
+//     */
+//    List<Employee> findAll();
 
     /**
      * Retrieves an employee record in the database.
@@ -22,36 +22,43 @@ public interface EmployeeService {
     Employee findById(int id);
 
     /**
-     * Retrieves an employee record in the database.
-     *
-     * @param employee record to search for in the database
-     * @return primary key of the record found, {@code -1} if none is matched
+     * Retrieves a list of employee records of which each element has some, or all
+     * properties, that are identical to those of the passed employee.
+     * @param employee contains the properties that want to look up in the database
+     * @return {@link List} containing all the matched records
      */
-    int findIdByInfo(Employee employee);
+    List<Employee> findEmployees(Employee employee);
 
-    /**
-     * Retrieves an employee record in the database.
-     *
-     * @param firstName first_name value of the record to search for in the database
-     * @return {@link List} of {@link Employee} found with the corresponding {@code firstName}, {@code null} if none is found
-     */
-    List<Employee> findByFirstName(String firstName);
+//    /**
+//     * Retrieves an employee record in the database.
+//     *
+//     * @param employee record to search for in the database
+//     * @return primary key of the record found, {@code -1} if none is matched
+//     */
+//    int findIdByInfo(Employee employee);
 
-    /**
-     * Retrieves an employee record in the database.
-     *
-     * @param lastName last_name value of the record to search for in the database
-     * @return {@link List} of {@link Employee} found with the corresponding {@code lastName}, {@code null} if none is found
-     */
-    List<Employee> findByLastName(String lastName);
-
-    /**
-     * Retrieves an employee record in the database.
-     *
-     * @param email email value of the record to search for in the database
-     * @return {@link List} of {@link Employee} found with the corresponding {@code email}, {@code null} if none is found
-     */
-    List<Employee> findByEmail(String email);
+//    /**
+//     * Retrieves an employee record in the database.
+//     *
+//     * @param firstName first_name value of the record to search for in the database
+//     * @return {@link List} of {@link Employee} found with the corresponding {@code firstName}, {@code null} if none is found
+//     */
+//    List<Employee> findByFirstName(String firstName);
+//
+//    /**
+//     * Retrieves an employee record in the database.
+//     *
+//     * @param lastName last_name value of the record to search for in the database
+//     * @return {@link List} of {@link Employee} found with the corresponding {@code lastName}, {@code null} if none is found
+//     */
+//    List<Employee> findByLastName(String lastName);
+//
+//    /**
+//     * Retrieves an employee record in the database.
+//     * @param email of the record to search for in the database
+//     * @return {@link List} of {@link Employee} found with the corresponding {@code email}, {@code null} if none is found
+//     */
+//    List<Employee> findByEmail(String email);
 
     /**
      * Creates a new employee record in the database.
@@ -61,7 +68,7 @@ public interface EmployeeService {
      *
      * @return auto-generated primary key of the created employee
      * {@code -1} if the {@code employee} validation fails
-     * @throws RuntimeException if the validation succeeds but the creation fails
+     * @throws RuntimeException if the validation fails or the record insertion fails
      */
     int addEmployee(Employee employee);
 
