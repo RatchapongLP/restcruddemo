@@ -2,6 +2,8 @@ package com.ryoma.restcruddemo.service;
 
 import com.ryoma.restcruddemo.dao.EmployeeDao;
 import com.ryoma.restcruddemo.entity.Employee;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,19 +13,31 @@ import java.util.List;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeDao employeeDao;
+    private Logger logger;
 
     @Autowired
     public EmployeeServiceImpl(EmployeeDao employeeDao) {
         this.employeeDao = employeeDao;
+        init();
+    }
+
+    private void init() {
+        logger = LogManager.getLogger(EmployeeServiceImpl.class.getSimpleName());
+        if (logger == null) {
+            System.out.println("Something went wrong when creating logger for " + EmployeeServiceImpl.class.getName());
+        }
     }
 
     @Override
     public Employee findById(int id) {
+        logger.info(">>> findById: id - " + id);
         return employeeDao.findById(id);
     }
 
     @Override
     public List<Employee> findEmployees(Employee employee) {
+        logger.info(">>> findEmployees: employee - " + employee);
+
         if (employee == null) {
             return employeeDao.findAll();
         }
@@ -47,6 +61,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public int addEmployee(Employee employee) {
+        logger.info(">>> addEmployee: employee - " + employee);
+
         Employee employeeWithFullName = employeeDao.findByFullName(employee.getFirstName(), employee.getLastName());
         if (employeeWithFullName != null) {
             throw new IllegalArgumentException("Employee with name - " + employeeWithFullName.getFirstName() + " " + employeeWithFullName.getLastName() + " already exists.");
@@ -62,7 +78,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void updateEmployee(Employee employee) {
         Employee employeeWithId = findById(employee.getId());
         if (employeeWithId == null) {
-            System.out.println("No employee with id - " + employee.getId() + " found.");
+            logger.info("No employee with id - " + employee.getId() + " found.");
             return;
         }
 
@@ -75,7 +91,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("Employee with email - " + employeeWithEmail.getEmail() + " already exists.");
         }
         if (employeeWithFullName != null && employeeWithEmail != null) {
-            System.out.println("Exact matched record found for the update query, early quit updating in " + EmployeeServiceImpl.class.getName());
+            logger.info("Exact matched record found for the update query, early quit updating in " + EmployeeServiceImpl.class.getName());
             return;
         }
 
@@ -87,7 +103,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteById(int id) {
         Employee employeeWithId = findById(id);
         if (employeeWithId == null) {
-            System.out.println("No employee with id - " + id + " found.");
+            logger.info("No employee with id - " + id + " found.");
             return;
         }
         employeeDao.deleteById(id);
