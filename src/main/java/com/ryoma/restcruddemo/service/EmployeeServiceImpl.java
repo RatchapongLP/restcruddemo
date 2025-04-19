@@ -22,7 +22,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void init() {
-        logger = LogManager.getLogger(EmployeeServiceImpl.class.getSimpleName());
+//        logger = LogManager.getLogger(EmployeeServiceImpl.class);
+        logger = LogManager.getLogger();
         if (logger == null) {
             System.out.println("Something went wrong when creating logger for " + EmployeeServiceImpl.class.getName());
         }
@@ -30,14 +31,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee findById(int id) {
-        logger.info(">>> findById: id - " + id);
+        logger.info("findById: id - " + id);
         return employeeDao.findById(id);
     }
 
     @Override
     public List<Employee> findEmployees(Employee employee) {
-        logger.info(">>> findEmployees: employee - " + employee);
-
+        logger.info("findEmployees: employee - " + employee);
         if (employee == null) {
             return employeeDao.findAll();
         }
@@ -61,8 +61,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public int addEmployee(Employee employee) {
-        logger.info(">>> addEmployee: employee - " + employee);
-
+        logger.info("addEmployee: employee - " + employee);
         Employee employeeWithFullName = employeeDao.findByFullName(employee.getFirstName(), employee.getLastName());
         if (employeeWithFullName != null) {
             throw new IllegalArgumentException("Employee with name - " + employeeWithFullName.getFirstName() + " " + employeeWithFullName.getLastName() + " already exists.");
@@ -76,6 +75,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void updateEmployee(Employee employee) {
+        logger.info("updateEmployee: employee - " + employee);
         Employee employeeWithId = findById(employee.getId());
         if (employeeWithId == null) {
             logger.info("No employee with id - " + employee.getId() + " found.");
@@ -101,6 +101,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void deleteById(int id) {
+        logger.info("deleteById: id - " + id);
         Employee employeeWithId = findById(id);
         if (employeeWithId == null) {
             logger.info("No employee with id - " + id + " found.");

@@ -30,22 +30,24 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     private void init() {
-        logger = LogManager.getLogger(EmployeeDaoJdbcTemplateImpl.class.getSimpleName());
+//        logger = LogManager.getLogger(EmployeeDaoJdbcTemplateImpl.class);
+        logger = LogManager.getLogger();
         if (logger == null) {
             logger.info("Something went wrong when creating logger for " + EmployeeDaoJdbcTemplateImpl.class.getName());
+            throw new RuntimeException("logger cannot be created");
         }
     }
 
     @Override
     public List<Employee> findAll() {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findAll()");
+        logger.info("findAll()");
         String query = "SELECT * FROM employee";
         return jdbcTemplate.query(query, new EmployeeRowMapper());
     }
 
     @Override
     public Employee findById(int id) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findById(" + id + ")");
+        logger.info("findById(" + id + ")");
         String query = "SELECT * FROM employee WHERE id=?";
         List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), id);
         if (employeeMatches.isEmpty()) {
@@ -59,7 +61,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
 
     @Override
     public int findIdByInfo(Employee employee) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByInfo(): " + employee);
+        logger.info("findByInfo(): " + employee);
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=? AND email=?";
         Employee employeeRetrieved = jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), employee.getFirstName(), employee.getLastName(), employee.getEmail());
         if (employeeRetrieved != null) {
@@ -70,7 +72,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
 
     @Override
     public Employee findByFullName(String firstName, String lastName) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByFullName(): " + firstName + " " + lastName);
+        logger.info("findByFullName(): " + firstName + " " + lastName);
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=?";
         List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), firstName, lastName);
         if (employeeMatches.isEmpty()) {
@@ -83,21 +85,21 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
 
     @Override
     public List<Employee> findByFirstName(String firstName) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByFirstName(): " + firstName);
+        logger.info("findByFirstName(): " + firstName);
         String query = "SELECT * FROM employee WHERE first_name=?";
         return jdbcTemplate.query(query, new EmployeeRowMapper(), firstName);
     }
 
     @Override
     public List<Employee> findByLastName(String lastName) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByLastName(): " + lastName);
+        logger.info("findByLastName(): " + lastName);
         String query = "SELECT * FROM employee WHERE last_name=?";
         return jdbcTemplate.query(query, new EmployeeRowMapper(), lastName);
     }
 
     @Override
     public Employee findByEmail(String email) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".findByEmail(): " + email);
+        logger.info("findByEmail(): " + email);
         String query = "SELECT * FROM employee WHERE email=?";
         List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), email);
         if (employeeMatches.isEmpty()) {
@@ -110,7 +112,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
 
     @Override
     public int addEmployee(Employee employee) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".addEmployee(): " + employee);
+        logger.info("addEmployee(): " + employee);
         String query = "INSERT INTO employee_directory.employee (first_name, last_name, email) VALUES (?,?,?)";
         jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail());
         return findIdByInfo(employee);
@@ -118,14 +120,14 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
 
     @Override
     public void updateEmployee(Employee employee) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".updateEmployee(): " + employee);
+        logger.info("updateEmployee(): " + employee);
         String query = "UPDATE employee_directory.employee SET first_name=?, last_name=?, email=? WHERE id=?";
         jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getId());
     }
 
     @Override
     public void deleteById(int id) {
-        logger.info(EmployeeDaoJdbcTemplateImpl.class.getName() + ".deleteById(" + id + ")");
+        logger.info("deleteById(" + id + ")");
         String query = "DELETE FROM employee WHERE id=?";
         jdbcTemplate.update(query, id);
     }
