@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Properties>
+        <Property name="log-folder">logs</Property>
+        <Property name="rolling-log-folder">logs/rolling</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss:SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="AllFile" fileName="${log-folder}/all.log">
+            <PatternLayout pattern="%d{DATE} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+        <File name="AppFile" fileName="${log-folder}/app.log">
+            <PatternLayout pattern="%d{DATE} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+        <File name="SpringFile" fileName="${log-folder}/spring.log">
+            <PatternLayout pattern="%d{DATE} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+        <RollingFile name="AllRollingFile"
+            fileName="${log-folder}/all_rolling.log"
+            filePattern="${rolling-log-folder}/all %d{yyyy-MMM-dd HH-mm-ss.SSS}.log">
+            <PatternLayout>
+                <pattern>%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n</pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="100 KB"/>
+        </RollingFile>
+        <RollingFile name="AppRollingFile"
+            fileName="${log-folder}/app_rolling.log"
+            filePattern="${rolling-log-folder}/app %d{yyyy-MMM-dd HH-mm-ss.SSS}.log">
+            <PatternLayout>
+                <pattern>%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n</pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="100 KB"/>
+        </RollingFile>
+        <RollingFile name="SpringRollingFile"
+            fileName="${log-folder}/spring_rolling.log"
+            filePattern="${rolling-log-folder}/spring %d{yyyy-MMM-dd HH-mm-ss.SSS}.log">
+            <PatternLayout>
+                <pattern>%d{DEFAULT} [%t] %-5level %logger{36} - %msg%n</pattern>
+            </PatternLayout>
+            <SizeBasedTriggeringPolicy size="100 KB"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="all">
+            <AppenderRef ref="Console" level="warn"/>
+            <AppenderRef ref="AllFile" level="trace"/>
+            <AppenderRef ref="AllRollingFile" level="trace"/>
+        </Root>
+<!--        This catches all the classes in this package logger-->
+        <Logger name="com.ryoma.restcruddemo" level="all" additivity="false">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="AppFile" level="debug"/>
+            <AppenderRef ref="AppRollingFile" level="debug"/>
+        </Logger>
+<!--        <Logger name="com.ryoma.restcruddemo.RestcruddemoApplication" level="all" additivity="false">-->
+<!--            <AppenderRef ref="Console" level="info"/>-->
+<!--            <AppenderRef ref="AppFile" level="debug"/>-->
+<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
+<!--        </Logger>-->
+<!--        <Logger name="com.ryoma.restcruddemo.controller.EmployeeRestController" level="all" additivity="false">-->
+<!--            <AppenderRef ref="Console" level="info"/>-->
+<!--            <AppenderRef ref="AppFile" level="debug"/>-->
+<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
+<!--        </Logger>-->
+<!--        <Logger name="com.ryoma.restcruddemo.service.EmployeeServiceImpl" level="all" additivity="false">-->
+<!--            <AppenderRef ref="Console" level="info"/>-->
+<!--            <AppenderRef ref="AppFile" level="debug"/>-->
+<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
+<!--        </Logger>-->
+<!--        <Logger name="com.ryoma.restcruddemo.dao.EmployeeDaoJdbcTemplateImpl" level="all" additivity="false">-->
+<!--            <AppenderRef ref="Console" level="info"/>-->
+<!--            <AppenderRef ref="AppFile" level="debug"/>-->
+<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
+<!--        </Logger>-->
+
+        <!-- Spring/library loggers -->
+        <Logger name="org.springframework" level="info" additivity="false">
+            <AppenderRef ref="SpringFile"/>
+            <AppenderRef ref="SpringRollingFile"/>
+        </Logger>
+        <Logger name="org.hibernate" level="info" additivity="false">
+            <AppenderRef ref="SpringFile"/>
+            <AppenderRef ref="SpringRollingFile"/>
+        </Logger>
+        <Logger name="com.zaxxer.hikari" level="info" additivity="false">
+            <AppenderRef ref="SpringFile"/>
+            <AppenderRef ref="SpringRollingFile"/>
+        </Logger>
+    </Loggers>
+</Configuration>
