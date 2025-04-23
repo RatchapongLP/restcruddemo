@@ -48,32 +48,33 @@
             <AppenderRef ref="AllFile" level="trace"/>
             <AppenderRef ref="AllRollingFile" level="trace"/>
         </Root>
+
 <!--        This catches all the classes in this package logger-->
-        <Logger name="com.ryoma.restcruddemo" level="all" additivity="false">
+<!--        <Logger name="com.ryoma.restcruddemo" level="all" additivity="false">-->
+<!--            <AppenderRef ref="AppFile" level="debug"/>-->
+<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
+<!--        </Logger>-->
+
+        <Logger name="com.ryoma.restcruddemo.RestcruddemoApplication" level="all" additivity="false">
             <AppenderRef ref="Console" level="info"/>
             <AppenderRef ref="AppFile" level="debug"/>
             <AppenderRef ref="AppRollingFile" level="debug"/>
         </Logger>
-<!--        <Logger name="com.ryoma.restcruddemo.RestcruddemoApplication" level="all" additivity="false">-->
-<!--            <AppenderRef ref="Console" level="info"/>-->
-<!--            <AppenderRef ref="AppFile" level="debug"/>-->
-<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="com.ryoma.restcruddemo.controller.EmployeeRestController" level="all" additivity="false">-->
-<!--            <AppenderRef ref="Console" level="info"/>-->
-<!--            <AppenderRef ref="AppFile" level="debug"/>-->
-<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="com.ryoma.restcruddemo.service.EmployeeServiceImpl" level="all" additivity="false">-->
-<!--            <AppenderRef ref="Console" level="info"/>-->
-<!--            <AppenderRef ref="AppFile" level="debug"/>-->
-<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
-<!--        </Logger>-->
-<!--        <Logger name="com.ryoma.restcruddemo.dao.EmployeeDaoJdbcTemplateImpl" level="all" additivity="false">-->
-<!--            <AppenderRef ref="Console" level="info"/>-->
-<!--            <AppenderRef ref="AppFile" level="debug"/>-->
-<!--            <AppenderRef ref="AppRollingFile" level="debug"/>-->
-<!--        </Logger>-->
+        <Logger name="com.ryoma.restcruddemo.controller.EmployeeRestController" level="all" additivity="false">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="AppFile" level="debug"/>
+            <AppenderRef ref="AppRollingFile" level="debug"/>
+        </Logger>
+        <Logger name="com.ryoma.restcruddemo.service.EmployeeServiceImpl" level="all" additivity="false">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="AppFile" level="debug"/>
+            <AppenderRef ref="AppRollingFile" level="debug"/>
+        </Logger>
+        <Logger name="com.ryoma.restcruddemo.dao.EmployeeDaoJdbcTemplateImpl" level="all" additivity="false">
+            <AppenderRef ref="Console" level="info"/>
+            <AppenderRef ref="AppFile" level="debug"/>
+            <AppenderRef ref="AppRollingFile" level="debug"/>
+        </Logger>
 
         <!-- Spring/library loggers -->
         <Logger name="org.springframework" level="info" additivity="false">
