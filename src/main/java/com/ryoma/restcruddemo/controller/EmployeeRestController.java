@@ -22,11 +22,13 @@ public class EmployeeRestController {
     }
 
     private void init() {
-//        logger = LogManager.getLogger(EmployeeRestController.class);
-        logger = LogManager.getLogger();
+        System.out.println(EmployeeRestController.class.getSimpleName() + ".init()");
+        logger = LogManager.getLogger(EmployeeRestController.class);
+//        logger = LogManager.getLogger();
         if (logger == null) {
             System.out.println("Something went wrong when creating logger for " + EmployeeRestController.class.getName());
         }
+        logger.info("logger's name: " + logger.getName());
     }
 
     @GetMapping("/employees/{id}")

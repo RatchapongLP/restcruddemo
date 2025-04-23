@@ -22,11 +22,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private void init() {
-//        logger = LogManager.getLogger(EmployeeServiceImpl.class);
-        logger = LogManager.getLogger();
+        System.out.println(EmployeeServiceImpl.class.getSimpleName() + ".init()");
+        logger = LogManager.getLogger(EmployeeServiceImpl.class);
+//        logger = LogManager.getLogger();
         if (logger == null) {
             System.out.println("Something went wrong when creating logger for " + EmployeeServiceImpl.class.getName());
         }
+        logger.info("logger's name: " + logger.getName());
     }
 
     @Override

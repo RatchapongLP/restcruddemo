@@ -30,12 +30,14 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     private void init() {
+        System.out.println(EmployeeDaoJdbcTemplateImpl.class.getSimpleName() + ".init()");
 //        logger = LogManager.getLogger(EmployeeDaoJdbcTemplateImpl.class);
         logger = LogManager.getLogger();
         if (logger == null) {
             logger.info("Something went wrong when creating logger for " + EmployeeDaoJdbcTemplateImpl.class.getName());
             throw new RuntimeException("logger cannot be created");
         }
+        logger.info("logger's name: " + logger.getName());
     }
 
     @Override
