@@ -132,11 +132,20 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
 
     @Override
     @Transactional
-    public int addEmployee(Employee employee) throws EmployeeDatabaseException {
+    public int addEmployee(Employee employee) {
         logger.info("addEmployee(): " + employee);
         String query = "INSERT INTO employee_directory.employee (first_name, last_name, email) VALUES (?,?,?)";
         jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail());
-        return findIdByInfo(employee);
+
+        int id;
+        try {
+            id = findIdByInfo(employee);
+        } catch (EmployeeDataDuplicatesFoundException e) {
+            logger.info("Cannot insert duplicated employee");
+            return -1;
+        }
+
+        return id;
     }
 
     @Override
