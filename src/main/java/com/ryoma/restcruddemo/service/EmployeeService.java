@@ -22,9 +22,16 @@ public interface EmployeeService {
     Employee findById(int id);
 
     /**
-     * Retrieves a list of employee records of which each element has some, or all
-     * properties, that are identical to those of the passed employee.
-     * @param employee contains the properties that want to look up in the database
+     * Retrieves a list of employee records of which some, or all
+     * properties are identical to the queried employee's.
+     * <p>
+     * Rules:
+     * <ol>
+     *     <li>If {@code employee} is null, all the records will be returned by the method.</li>
+     *     <li>All of the {@code employee}'s non-null fields will be used in the search.</li>
+     * </ol>
+     * </p>
+     * @param employee contains the properties that will be searched for record matches
      * @return {@link List} containing all the matched records
      */
     List<Employee> findEmployees(Employee employee);
@@ -62,21 +69,21 @@ public interface EmployeeService {
 
     /**
      * Creates a new employee record in the database.
-     * A new employee should not have the same first name and last name as those of an existing one.
-     * Replicating email is also forbidden.
-     * A validation will be performed on those properties, preventing repeating records.
+     * The queried employee cannot have the same first name, last name, and email as those of an existing one.
+     * Validations are to be performed on those properties, preventing repeated records.
      *
-     * @return auto-generated primary key of the created employee
-     * {@code -1} if the {@code employee} validation fails
-     * @throws RuntimeException if the validation fails or the record insertion fails
-     */
+     * @return auto-generated primary key of the created employee as an integer
+     * @throws IllegalArgumentException if the data is found duplicating another employee
+     * */
     int addEmployee(Employee employee);
 
     /**
      * Modifies an existing employee record in the database.
+     * Only employee with existing id can be updated without failure. If there exists a record with the same full name or email,
+     * but with different id, the update will fail.
      *
-     * @param employee record to update in the database. All the properties of the passed object will replace the original ones.
-     * @throws RuntimeException if the update of the employee record fails
+     * @param employee record to update in the database. All the fields of the queried employee will replace the original ones.
+     * @throws IllegalArgumentException if the data is found duplicating another employee or the id cannot be not found in the database
      */
     void updateEmployee(Employee employee);
 
@@ -84,7 +91,7 @@ public interface EmployeeService {
      * Deletes an existing employee record in the database.
      *
      * @param id primary key of the employee to delete in the database
-     * @throws RuntimeException if the deletion of the record with {@code id} fails
+     * @throws IllegalArgumentException if the id cannot be not found in the database
      */
     void deleteById(int id);
 }
