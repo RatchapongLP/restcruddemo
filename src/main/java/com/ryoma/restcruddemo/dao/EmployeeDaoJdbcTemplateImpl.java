@@ -3,6 +3,7 @@ package com.ryoma.restcruddemo.dao;
 import com.ryoma.restcruddemo.entity.Employee;
 import com.ryoma.restcruddemo.entity.EmployeeRowMapper;
 import com.ryoma.restcruddemo.exception.EmployeeDatabaseException;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
+    @Transactional
     public int addEmployee(Employee employee) throws EmployeeDatabaseException {
         logger.info("addEmployee(): " + employee);
         String query = "INSERT INTO employee_directory.employee (first_name, last_name, email) VALUES (?,?,?)";
