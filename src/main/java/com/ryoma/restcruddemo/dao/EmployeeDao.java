@@ -41,10 +41,10 @@ public interface EmployeeDao {
      * to make sure of non-duplicate record insertion.
      *
      * @param employee record to be inserted
-     * @return the primary key of the new record
-     * @throws EmployeeDatabaseException if the queried {@code employee} resembles an existing record found in the database
+     * @return the primary key of the new record, -1 if the queried {@code employee} resembles an existing
+     * record found in the database
      */
-    int addEmployee(Employee employee) throws EmployeeDatabaseException;
+    int addEmployee(Employee employee) throws EmployeeDataDuplicatesFoundException;
 
     void updateEmployee(Employee employee);
 
