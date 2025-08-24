@@ -38,10 +38,46 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findEmployees(Employee employee) {
+    public List<Employee> findEmployees(Employee employee) throws EmployeeDatabaseException {
         logger.info("findEmployees: employee - " + employee);
+
         if (employee == null) {
             return employeeDao.findAll();
+        }
+
+        // TODO: implements all the scenarios of available (non-null) fields with least db access
+
+        List<Employee> matchedEmployee= new ArrayList<>();
+
+        // When all the non-id fields are provided, search for a whole match, and patch in the found id if it is not provided.
+        // Throw an exception when the id is provided but does not match the search result.
+        if (employee.getFirstName() != null && employee.getLastName() != null && employee.getEmail() != null) {
+
+            logger.info("Searching the employee with the queried firstName, lastName, and email");
+
+            int id;
+            try {
+                id = employeeDao.findIdByInfo(employee);
+            } catch (EmployeeDatabaseException e) {
+                logger.error("Duplicates found in the 'employee' table.");
+                throw e;
+            }
+
+            if (id == -1) {
+                logger.info("No matched record found.");
+                return null;
+            }
+
+            logger.info("Found a matched record with the id - " + id);
+
+            if (employee.getId() != 0 && employee.getId() != id) {
+                logger.info("The queried employee's id conflicts with the database.");
+            } else {
+                logger.info("No conflict found.");
+            }
+
+            employee.setId(id);
+            matchedEmployee.add(employee);
         }
 
         if (employee.getFirstName() != null && employee.getLastName() != null) {
