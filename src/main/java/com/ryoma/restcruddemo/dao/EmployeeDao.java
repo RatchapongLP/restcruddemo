@@ -1,7 +1,7 @@
 package com.ryoma.restcruddemo.dao;
 
 import com.ryoma.restcruddemo.entity.Employee;
-import com.ryoma.restcruddemo.exception.EmployeeDatabaseException;
+import com.ryoma.restcruddemo.dao.exception.EmployeeDataDuplicatesFoundException;
 
 import java.util.List;
 
@@ -16,19 +16,19 @@ public interface EmployeeDao {
      *
      * @param employee record to search for.
      * @return the matched record's id. If no matches is found, -1 is returned.
-     * @throws EmployeeDatabaseException if multiple matched records are found.
+     * @throws EmployeeDataDuplicatesFoundException if multiple matched records are found.
      */
-    int findIdByInfo(Employee employee) throws EmployeeDatabaseException;
+    int findIdByInfo(Employee employee) throws EmployeeDataDuplicatesFoundException;
 
     /**
-     * Search for the only one matched record with the specified firstName and lastName.
+     * Search for the only one matched record with the specified {@code firstName} and {@code lastName}.
      *
      * @param firstName employee's firstName, cannot be null
      * @param lastName employee's lastName, cannot be null
      * @return the matched record. If no matches is found, null {@code Employee} is returned.
-     * @throws EmployeeDatabaseException if duplicated full names are found on multiple records
+     * @throws EmployeeDataDuplicatesFoundException if duplicated full names are found on multiple records
      */
-    Employee findByFullName(String firstName, String lastName) throws EmployeeDatabaseException;
+    Employee findByFullName(String firstName, String lastName) throws EmployeeDataDuplicatesFoundException;
 
     List<Employee> findByFirstName(String firstName);
 

@@ -2,7 +2,7 @@ package com.ryoma.restcruddemo.dao;
 
 import com.ryoma.restcruddemo.entity.Employee;
 import com.ryoma.restcruddemo.entity.EmployeeRowMapper;
-import com.ryoma.restcruddemo.exception.EmployeeDatabaseException;
+import com.ryoma.restcruddemo.dao.exception.EmployeeDataDuplicatesFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +64,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
-    public int findIdByInfo(Employee employee) throws EmployeeDatabaseException {
+    public int findIdByInfo(Employee employee) throws EmployeeDataDuplicatesFoundException {
         logger.info("findByInfo(): " + employee);
 
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=? AND email=?";
@@ -74,14 +74,17 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
             return -1;
         }
         if (employeeList.size() > 1) {
-            throw new EmployeeDatabaseException("Found multiple duplicates of employee: " + employee);
+            List<Integer> idList = employeeList.stream()
+                    .map(Employee::getId)
+                    .toList();
+            throw new EmployeeDataDuplicatesFoundException("Found multiple duplicates on records with id's: " + idList);
         }
 
         return employeeList.get(0).getId();
     }
 
     @Override
-    public Employee findByFullName(String firstName, String lastName) throws EmployeeDatabaseException {
+    public Employee findByFullName(String firstName, String lastName) throws EmployeeDataDuplicatesFoundException {
         logger.info("findByFullName(): " + firstName + " " + lastName);
 
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=?";
@@ -94,7 +97,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
             List<Integer> idList = employeeList.stream()
                     .map(Employee::getId)
                     .toList();
-            throw new EmployeeDatabaseException("Found duplicated full names on records with id's: " + idList);
+            throw new EmployeeDataDuplicatesFoundException("Found duplicated full names on records with id's: " + idList);
         }
 
         return employeeList.get(0);
