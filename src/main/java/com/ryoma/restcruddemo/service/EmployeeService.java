@@ -1,6 +1,7 @@
 package com.ryoma.restcruddemo.service;
 
 import com.ryoma.restcruddemo.entity.Employee;
+import com.ryoma.restcruddemo.exception.EmployeeDatabaseException;
 
 import java.util.List;
 
@@ -32,9 +33,10 @@ public interface EmployeeService {
      * </ol>
      * </p>
      * @param employee contains the properties that will be searched for record matches
-     * @return {@link List} containing all the matched records
+     * @return {@link List} containing all the matched records\
+     * @throws EmployeeDatabaseException if duplicate records with different id's are found
      */
-    List<Employee> findEmployees(Employee employee);
+    List<Employee> findEmployees(Employee employee) throws EmployeeDatabaseException;
 
 //    /**
 //     * Retrieves an employee record in the database.
@@ -75,7 +77,7 @@ public interface EmployeeService {
      * @return auto-generated primary key of the created employee as an integer
      * @throws IllegalArgumentException if the data is found duplicating another employee
      * */
-    int addEmployee(Employee employee);
+    int addEmployee(Employee employee) throws EmployeeDatabaseException;
 
     /**
      * Modifies an existing employee record in the database.
