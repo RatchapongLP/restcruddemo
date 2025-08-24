@@ -118,16 +118,23 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
-    public Employee findByEmail(String email) {
+    public Employee findByEmail(String email) throws EmployeeDataDuplicatesFoundException {
         logger.info("findByEmail(): " + email);
+
         String query = "SELECT * FROM employee WHERE email=?";
-        List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), email);
-        if (employeeMatches.isEmpty()) {
-            logger.info("No employee found with the given email");
+        List<Employee> employeeList = jdbcTemplate.query(query, new EmployeeRowMapper(), email);
+
+        if (employeeList.isEmpty()) {
             return null;
         }
-        logger.info("Found an Employee with the email: " + employeeMatches.get(0));
-        return employeeMatches.get(0);
+        if (employeeList.size() > 1) {
+            List<Integer> idList = employeeList.stream()
+                    .map(Employee::getId)
+                    .toList();
+            throw new EmployeeDataDuplicatesFoundException("Found duplicated emails on records with id's: " + idList);
+        }
+
+        return employeeList.get(0);
     }
 
     @Override
