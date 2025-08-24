@@ -2,6 +2,7 @@ package com.ryoma.restcruddemo.dao;
 
 import com.ryoma.restcruddemo.entity.Employee;
 import com.ryoma.restcruddemo.entity.EmployeeRowMapper;
+import com.ryoma.restcruddemo.exception.EmployeeDatabaseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,14 +63,20 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
-    public int findIdByInfo(Employee employee) {
+    public int findIdByInfo(Employee employee) throws EmployeeDatabaseException {
         logger.info("findByInfo(): " + employee);
+
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=? AND email=?";
-        Employee employeeRetrieved = jdbcTemplate.queryForObject(query, new EmployeeRowMapper(), employee.getFirstName(), employee.getLastName(), employee.getEmail());
-        if (employeeRetrieved != null) {
-            return employeeRetrieved.getId();
+        List<Employee> employeeList = jdbcTemplate.query(query, new EmployeeRowMapper(), employee.getFirstName(), employee.getLastName(), employee.getEmail());
+
+        if (employeeList.isEmpty()) {
+            return -1;
         }
-        return -1;
+        if (employeeList.size() > 1) {
+            throw new EmployeeDatabaseException("Found multiple duplicates of employee: " + employee);
+        }
+
+        return employeeList.get(0).getId();
     }
 
     @Override
@@ -113,7 +120,7 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
-    public int addEmployee(Employee employee) {
+    public int addEmployee(Employee employee) throws EmployeeDatabaseException {
         logger.info("addEmployee(): " + employee);
         String query = "INSERT INTO employee_directory.employee (first_name, last_name, email) VALUES (?,?,?)";
         jdbcTemplate.update(query, employee.getFirstName(), employee.getLastName(), employee.getEmail());
