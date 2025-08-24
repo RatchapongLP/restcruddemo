@@ -92,7 +92,7 @@ public interface EmployeeService {
      * @param employee record to update in the database. All the fields of the queried employee will replace the original ones.
      * @throws IllegalArgumentException if the data is found duplicating another employee or the id cannot be not found in the database
      */
-    void updateEmployee(Employee employee);
+    void updateEmployee(Employee employee) throws EmployeeDataDuplicatesFoundException;
 
     /**
      * Deletes an existing employee record in the database.

@@ -2,6 +2,7 @@ package com.ryoma.restcruddemo.service;
 
 import com.ryoma.restcruddemo.dao.EmployeeDao;
 import com.ryoma.restcruddemo.entity.Employee;
+import com.ryoma.restcruddemo.dao.exception.EmployeeDataDuplicatesFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +139,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public int addEmployee(Employee employee) {
+    public int addEmployee(Employee employee) throws EmployeeDataDuplicatesFoundException {
         logger.info("addEmployee: employee - " + employee);
         Employee employeeWithFullName = employeeDao.findByFullName(employee.getFirstName(), employee.getLastName());
         if (employeeWithFullName != null) {
@@ -156,21 +157,21 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employee record to update in the database. All the fields of the queried employee will replace the original ones.
      */
     @Override
-    public void updateEmployee(Employee employee) {
+    public void updateEmployee(Employee employee) throws EmployeeDataDuplicatesFoundException {
         logger.info("updateEmployee: employee - " + employee);
         Employee employeeWithId = findById(employee.getId());
         if (employeeWithId == null) {
             logger.info("No employee with id - " + employee.getId() + " found.");
-            return;
+            throw new IllegalArgumentException("Employee with id - " + employee.getId() + " is not found.");
         }
 
         Employee employeeWithFullName = employeeDao.findByFullName(employee.getFirstName(), employee.getLastName());
         if (employeeWithFullName != null && employeeWithFullName.getId() != employee.getId()) {
-            throw new IllegalArgumentException("Employee with name - " + employeeWithFullName.getFirstName() + " " + employeeWithFullName.getLastName() + " already exists.");
+            throw new IllegalArgumentException("Employee with full name - " + employeeWithFullName.getFirstName() + " " + employeeWithFullName.getLastName() + " already exists with another id.");
         }
         Employee employeeWithEmail = employeeDao.findByEmail(employee.getEmail());
         if (employeeWithEmail != null && employeeWithEmail.getId() != employee.getId()) {
-            throw new IllegalArgumentException("Employee with email - " + employeeWithEmail.getEmail() + " already exists.");
+            throw new IllegalArgumentException("Email - " + employeeWithEmail.getEmail() + " already used by another employee.");
         }
 
         // Can save a redundant db update.
@@ -185,11 +186,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public void deleteById(int id) {
+        // TODO: reduce db access
         logger.info("deleteById: id - " + id);
         Employee employeeWithId = findById(id);
         if (employeeWithId == null) {
             logger.info("No employee with id - " + id + " found.");
-            return;
+            throw new IllegalArgumentException("Employee with id - " + id + " is not found.");
         }
         employeeDao.deleteById(id);
     }
