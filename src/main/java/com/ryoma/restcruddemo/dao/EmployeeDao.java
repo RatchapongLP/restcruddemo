@@ -34,7 +34,14 @@ public interface EmployeeDao {
 
     List<Employee> findByLastName(String lastName);
 
-    Employee findByEmail(String email);
+    /**
+     * Search for the only one matched record with the specified {@code email}.
+     *
+     * @param email employee's email, cannot be null
+     * @return the matched record. If no matches is found, null is returned.
+     * @throws EmployeeDataDuplicatesFoundException if duplicated emails are found on multiple records
+     */
+    Employee findByEmail(String email) throws EmployeeDataDuplicatesFoundException;
 
     /**
      * Add a new record to the database. An id will be generated as its primary key. A validation will be performed
