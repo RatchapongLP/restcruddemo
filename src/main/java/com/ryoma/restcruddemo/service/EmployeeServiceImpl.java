@@ -75,6 +75,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeDao.addEmployee(employee);
     }
 
+    /**
+     * Optimized by remove redundant update if the queried data is the same.
+     * @param employee record to update in the database. All the fields of the queried employee will replace the original ones.
+     */
     @Override
     public void updateEmployee(Employee employee) {
         logger.info("updateEmployee: employee - " + employee);
@@ -92,8 +96,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeWithEmail != null && employeeWithEmail.getId() != employee.getId()) {
             throw new IllegalArgumentException("Employee with email - " + employeeWithEmail.getEmail() + " already exists.");
         }
+
+        // Can save a redundant db update.
         if (employeeWithFullName != null && employeeWithEmail != null) {
-            logger.info("Exact matched record found for the update query, early quit updating in " + EmployeeServiceImpl.class.getName());
+            logger.info("Queried employee has the same data, early quit updating in " + EmployeeServiceImpl.class.getName());
             return;
         }
 
