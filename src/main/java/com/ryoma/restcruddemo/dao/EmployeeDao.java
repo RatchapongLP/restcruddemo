@@ -28,6 +28,14 @@ public interface EmployeeDao {
 
     Employee findByEmail(String email);
 
+    /**
+     * Add a new record to the database. An id will be generated as its primary key. A validation will be performed
+     * to make sure of non-duplicate record insertion.
+     *
+     * @param employee record to be inserted
+     * @return the primary key of the new record
+     * @throws EmployeeDatabaseException if the queried {@code employee} resembles an existing record found in the database
+     */
     int addEmployee(Employee employee) throws EmployeeDatabaseException;
 
     void updateEmployee(Employee employee);
