@@ -32,8 +32,12 @@ public interface EmployeeService {
      *     <li>All of the {@code employee}'s non-null fields will be used in the search.</li>
      * </ol>
      * </p>
+     * Special case: if {@code employee} is provided with all fields as non-null and the matched record
+     * is retrieved from the database but with different id, the existing record's id will replace the
+     * queried's id and the patched {@code employee} will be returned in a list.
+     *
      * @param employee contains the properties that will be searched for record matches
-     * @return {@link List} containing all the matched records\
+     * @return {@link List} containing all the matched records
      * @throws EmployeeDatabaseException if duplicate records with different id's are found
      */
     List<Employee> findEmployees(Employee employee) throws EmployeeDatabaseException;
