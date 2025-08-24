@@ -38,8 +38,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findEmployees(Employee employee) throws EmployeeDatabaseException {
-        logger.info("findEmployees: employee - " + employee);
+    public List<Employee> findEmployees(Employee employee) throws Exception {
+        logger.info("findEmployees: employee - {}", employee);
 
         if (employee == null) {
             return employeeDao.findAll();
@@ -47,50 +47,90 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // TODO: implements all the scenarios of available (non-null) fields with least db access
 
-        List<Employee> matchedEmployee= new ArrayList<>();
-
-        // When all the non-id fields are provided, search for a whole match, and patch in the found id if it is not provided.
-        // Throw an exception when the id is provided but does not match the search result.
         if (employee.getFirstName() != null && employee.getLastName() != null && employee.getEmail() != null) {
 
             logger.info("Searching the employee with the queried firstName, lastName, and email");
 
-            int id;
+            int idResult;
             try {
-                id = employeeDao.findIdByInfo(employee);
-            } catch (EmployeeDatabaseException e) {
-                logger.error("Duplicates found in the 'employee' table.");
+                idResult = employeeDao.findIdByInfo(employee);
+            } catch (Exception e) {
+                logger.error("{}: {}", EmployeeServiceImpl.class.getSimpleName(), e.getMessage());
                 throw e;
             }
+            if (idResult == -1) return null;
 
-            if (id == -1) {
-                logger.info("No matched record found.");
-                return null;
-            }
+            logger.info("Found a matched record with the id - {}", idResult);
+            logEmployeeIdChecking(employee, idResult);
 
-            logger.info("Found a matched record with the id - " + id);
+            // Patch the correct id for the special case.
+            employee.setId(idResult);
 
-            if (employee.getId() != 0 && employee.getId() != id) {
-                logger.info("The queried employee's id conflicts with the database.");
-            } else {
-                logger.info("No conflict found.");
-            }
-
-            employee.setId(id);
-            matchedEmployee.add(employee);
+            return List.of(employee);
         }
 
         if (employee.getFirstName() != null && employee.getLastName() != null) {
-            return List.of(employeeDao.findByFullName(employee.getFirstName(), employee.getLastName()));
+
+            logger.info("Searching the employee with the queried firstName and lastName");
+
+            Employee employeeResult;
+            try {
+                employeeResult = employeeDao.findByFullName(employee.getFirstName(), employee.getLastName());
+            } catch (Exception e) {
+                logger.error("{}: {}", EmployeeServiceImpl.class.getSimpleName(), e.getMessage());
+                throw e;
+            }
+            if (employeeResult == null) return null;
+            logEmployeeIdChecking(employee, employeeResult.getId());
+
+            return List.of(employeeResult);
         }
-        if (employee.getFirstName() != null) {
-            return employeeDao.findByFirstName(employee.getFirstName());
-        }
-        if (employee.getLastName() != null) {
-            return employeeDao.findByLastName(employee.getLastName());
-        }
+
         if (employee.getEmail() != null) {
-            return List.of(employeeDao.findByEmail(employee.getEmail()));
+
+            logger.info("Searching the employee with the queried email");
+
+            Employee employeeResult;
+            try {
+                employeeResult = employeeDao.findByEmail(employee.getEmail());
+            } catch (Exception e) {
+                logger.error("{}: {}", EmployeeServiceImpl.class.getSimpleName(), e.getMessage());
+                throw e;
+            }
+            if (employeeResult == null) return null;
+            logEmployeeIdChecking(employee, employeeResult.getId());
+
+            return List.of(employeeResult);
+        }
+
+        if (employee.getFirstName() != null) {
+
+            logger.info("Searching the employee with the queried firstName");
+
+            List<Employee> employeeResultList;
+            try {
+                employeeResultList = employeeDao.findByFirstName(employee.getFirstName());
+            } catch (Exception e) {
+                logger.error("{}: {}", EmployeeServiceImpl.class.getSimpleName(), e.getMessage());
+                throw e;
+            }
+
+            return employeeResultList;
+        }
+
+        if (employee.getLastName() != null) {
+
+            logger.info("Searching the employee with the queried lastName");
+
+            List<Employee> employeeResultList;
+            try {
+                employeeResultList = employeeDao.findByLastName(employee.getLastName());
+            } catch (Exception e) {
+                logger.error("{}: {}", EmployeeServiceImpl.class.getSimpleName(), e.getMessage());
+                throw e;
+            }
+
+            return employeeResultList;
         }
 
         return employeeDao.findAll();
@@ -152,5 +192,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             return;
         }
         employeeDao.deleteById(id);
+    }
+
+    private void logEmployeeIdChecking(Employee queriedEmployee, int databaseId) {
+        if (queriedEmployee.getId() != 0 && queriedEmployee.getId() != databaseId) {
+            logger.info("The queried employee's id conflicts with the database.");
+        } else {
+            logger.info("No conflict found.");
+        }
     }
 }
