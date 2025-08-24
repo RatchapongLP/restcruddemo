@@ -1,7 +1,7 @@
 package com.ryoma.restcruddemo.service;
 
 import com.ryoma.restcruddemo.entity.Employee;
-import com.ryoma.restcruddemo.exception.EmployeeDatabaseException;
+import com.ryoma.restcruddemo.dao.exception.EmployeeDataDuplicatesFoundException;
 
 import java.util.List;
 
@@ -24,23 +24,24 @@ public interface EmployeeService {
 
     /**
      * Retrieves a list of employee records of which some, or all
-     * properties are identical to the queried employee's.
+     * properties, excluding {@code id}, are identical to the queried employee's.
      * <p>
      * Rules:
      * <ol>
      *     <li>If {@code employee} is null, all the records will be returned by the method.</li>
-     *     <li>All of the {@code employee}'s non-null fields will be used in the search.</li>
+     *     <li>All, and only, the {@code employee}'s non-null, non-{@code id} fields will be used in the search.</li>
+     *     <li>Non-null fields are allowed for one of these pattern: all fields, full name, email, first name, and last name.</li>
      * </ol>
-     * </p>
-     * Special case: if {@code employee} is provided with all fields as non-null and the matched record
-     * is retrieved from the database but with different id, the existing record's id will replace the
-     * queried's id and the patched {@code employee} will be returned in a list.
+     * <p>
+     * Special case: if {@code employee} has an {@code id} that doesn't match the one in the database,
+     * the retrieved record's id will replace the queried's id and the patched {@code employee}
+     * will be returned in a list.
      *
      * @param employee contains the properties that will be searched for record matches
-     * @return {@link List} containing all the matched records
-     * @throws EmployeeDatabaseException if duplicate records with different id's are found
+     * @return {@link List} containing all the matched records with all the retrieved fields
+     * @throws EmployeeDataDuplicatesFoundException if duplicate records with different id's are found
      */
-    List<Employee> findEmployees(Employee employee) throws EmployeeDatabaseException;
+    List<Employee> findEmployees(Employee employee) throws Exception;
 
 //    /**
 //     * Retrieves an employee record in the database.
@@ -81,7 +82,7 @@ public interface EmployeeService {
      * @return auto-generated primary key of the created employee as an integer
      * @throws IllegalArgumentException if the data is found duplicating another employee
      * */
-    int addEmployee(Employee employee) throws EmployeeDatabaseException;
+    int addEmployee(Employee employee) throws EmployeeDataDuplicatesFoundException;
 
     /**
      * Modifies an existing employee record in the database.
