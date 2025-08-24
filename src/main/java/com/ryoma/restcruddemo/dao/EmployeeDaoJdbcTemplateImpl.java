@@ -81,16 +81,23 @@ public class EmployeeDaoJdbcTemplateImpl implements EmployeeDao {
     }
 
     @Override
-    public Employee findByFullName(String firstName, String lastName) {
+    public Employee findByFullName(String firstName, String lastName) throws EmployeeDatabaseException {
         logger.info("findByFullName(): " + firstName + " " + lastName);
+
         String query = "SELECT * FROM employee WHERE first_name=? AND last_name=?";
-        List<Employee> employeeMatches = jdbcTemplate.query(query, new EmployeeRowMapper(), firstName, lastName);
-        if (employeeMatches.isEmpty()) {
-            logger.info("No employee found with given the fullName");
+        List<Employee> employeeList = jdbcTemplate.query(query, new EmployeeRowMapper(), firstName, lastName);
+
+        if (employeeList.isEmpty()) {
             return null;
         }
-        logger.info("Found an Employee with the fullName: " + employeeMatches.get(0));
-        return employeeMatches.get(0);
+        if (employeeList.size() > 1) {
+            List<Integer> idList = employeeList.stream()
+                    .map(Employee::getId)
+                    .toList();
+            throw new EmployeeDatabaseException("Found duplicated full names on records with id's: " + idList);
+        }
+
+        return employeeList.get(0);
     }
 
     @Override
