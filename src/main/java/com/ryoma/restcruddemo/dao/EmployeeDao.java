@@ -20,7 +20,15 @@ public interface EmployeeDao {
      */
     int findIdByInfo(Employee employee) throws EmployeeDatabaseException;
 
-    Employee findByFullName(String firstName, String lastName);
+    /**
+     * Search for the only one matched record with the specified firstName and lastName.
+     *
+     * @param firstName employee's firstName, cannot be null
+     * @param lastName employee's lastName, cannot be null
+     * @return the matched record. If no matches is found, null {@code Employee} is returned.
+     * @throws EmployeeDatabaseException if duplicated full names are found on multiple records
+     */
+    Employee findByFullName(String firstName, String lastName) throws EmployeeDatabaseException;
 
     List<Employee> findByFirstName(String firstName);
 
